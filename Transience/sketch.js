@@ -1,3 +1,7 @@
+// Dan Shiffman slit-scan tutorial: https://www.youtube.com/watch?v=WCJM9WIoudI
+
+// a sketch that employs ml5 to detect human bodies which triggers a slit-scan photo capture
+
 let video;
 let bodyPose;
 let poses = [];
@@ -11,6 +15,7 @@ let captureInterval = 1; //ms
 let capturing = false;
 let captureDirection = 1; // 1 towards right, -1 towards left
 let triggered = false;
+let lastPoseDetected = false; 
 
 function preload() {
   bodyPose = ml5.bodyPose({ flipped: true }); // ml5 with flipped video
@@ -80,7 +85,7 @@ function gotPoses(results) {
 
   let poseNowDetected = poses.length > 0;
 
-  // Trigger capture when pose is detected and not already capturing
+  // Trigger capture when pose is detected and not already capturing: code by chatGPT
   if (poseNowDetected && !lastPoseDetected && !capturing) {
     let pose = poses[0]; // Use first detected pose
     for (let j = 0; j < pose.keypoints.length; j++) {
@@ -113,4 +118,11 @@ function getSection(x) {
   if (x < width / 3) return 'left';
   if (x > (2 * width) / 3) return 'right';
   return 'center';
+}
+
+// Save image on keypress
+function keyPressed() {
+  if (key === 's' || key === 'S') {
+    saveCanvas('slit-scan-capture', 'png');
+  }
 }
