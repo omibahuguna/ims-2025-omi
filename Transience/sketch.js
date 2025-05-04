@@ -29,7 +29,7 @@ let lastPoseDetected = false;
 
 let lastKeypointPos = null; // To store the last position of the keypoint
 let minCaptureInterval = 1; // Minimum capture interval (ms)
-let maxCaptureInterval = 20; // Maximum capture interval (ms)
+let maxCaptureInterval = 30; // Maximum capture interval (ms)
 
 let my = {};
 
@@ -59,6 +59,7 @@ function setup() {
 }
 
 function draw() {
+  frameRate (30);
   let layer = my.layer;
   if (!layer) {
     // console.log('waiting for video', millis() / 1000);
@@ -77,7 +78,25 @@ function draw() {
   // Image video to full width of canvas
   // height is adjusted for aspect ratio
   image(layer, 0, 0, dw, dh, 0, 0, sw, sh);
+  fill (255);
+  textSize(24);
     text(`Capture Interval: ${captureInterval.toFixed(1)} ms`, 20, 20);
+
+    // Vertical line to show current column
+  if (currentCol >= 0 && currentCol < cols) {
+    let lineX = map(currentCol, 0, cols, 0, width); // Map the column index to canvas width
+    push();
+    drawingContext.filter = 'blur(20px)';
+    stroke(166, 255, 0, 127); // Set stroke color
+    strokeWeight(5); // Set stroke weight
+    line(lineX, 0, lineX, height); // Draw the vertical line
+    pop();
+    push();
+    stroke(255); // Set stroke color
+    strokeWeight(2); // Set stroke weight
+    line(lineX, 0, lineX, height); // Draw the vertical line
+    pop();
+  }
 }
 
 // image(img, dx, dy, dWidth, dHeight, sx, sy, [sWidth], [sHeight], [fit], [xAlign], [yAlign])
@@ -135,7 +154,7 @@ function render_layer(layer) {
 }
 
 
-// function to map speed to capture interval—code by Claude
+// function to map speed to capture interval—code by Copilot•
 function gotPoses(results) {
   poses = results;
   let poseNowDetected = poses.length > 0;
@@ -169,8 +188,7 @@ function gotPoses(results) {
         let dy = kpY - lastKeypointPos.y;
         let speed = dist(0, 0, dx, dy); // Speed is the distance moved between frames
         
-        // Adjust the speed range for more realistic mapping
-        // Most movement between frames will be smaller values
+        // Mapping movement of keypoint between pixels to capture interval
         captureInterval = map(speed, 1, 5, maxCaptureInterval, minCaptureInterval);
         captureInterval = constrain(captureInterval, minCaptureInterval, maxCaptureInterval);
         
@@ -217,8 +235,8 @@ function gotPoses(results) {
 function getSection(x) {
   // In video dimensions
   let width = video.width;
-  if (x < width / 3) return 'left';
-  if (x > (2 * width) / 3) return 'right';
+  if (x < width / 10) return 'left';
+  if (x > (9 * width) / 10) return 'right';
   return 'center';
 }
 
