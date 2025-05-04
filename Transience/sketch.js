@@ -1,15 +1,9 @@
 // https://editor.p5js.org/jht9629-nyu/sketches/P_fljj9ev
 // Transience omi v1
-// createGraphics use to scale video
-// to full screen with correct aspect ratio
 
 // https://omibahuguna.github.io/ims-2025-omi/Transience/
-// https://editor.p5js.org/omi99/sketches
-// https://editor.p5js.org/omi99/sketches/ohwy2A1tC
 
 // Dan Shiffman slit-scan tutorial: https://www.youtube.com/watch?v=WCJM9WIoudI
-
-// a sketch that employs ml5 to detect human bodies which triggers a slit-scan photo capture
 
 let video;
 let bodyPose;
@@ -62,7 +56,7 @@ function draw() {
   frameRate (30);
   let layer = my.layer;
   if (!layer) {
-    // console.log('waiting for video', millis() / 1000);
+   
     return;
     
 
@@ -87,14 +81,14 @@ function draw() {
     let lineX = map(currentCol, 0, cols, 0, width); // Map the column index to canvas width
     push();
     drawingContext.filter = 'blur(20px)';
-    stroke(166, 255, 0, 127); // Set stroke color
-    strokeWeight(5); // Set stroke weight
-    line(lineX, 0, lineX, height); // Draw the vertical line
+    stroke(166, 255, 0, 127); 
+    strokeWeight(5); 
+    line(lineX, 0, lineX, height);
     pop();
     push();
-    stroke(255); // Set stroke color
-    strokeWeight(2); // Set stroke weight
-    line(lineX, 0, lineX, height); // Draw the vertical line
+    stroke(255); 
+    strokeWeight(2);
+    line(lineX, 0, lineX, height);
     pop();
   }
 }
@@ -154,7 +148,7 @@ function render_layer(layer) {
 }
 
 
-// function to map speed to capture interval—code by Copilot•
+// function to map speed to capture interval—code by Copilot
 function gotPoses(results) {
   poses = results;
   let poseNowDetected = poses.length > 0;
