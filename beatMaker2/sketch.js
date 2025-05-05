@@ -112,6 +112,15 @@ function mousePressed() {
   }
 }
 
+function touchStarted() {
+  let row = floor(touchY / cellSize);
+  let col = floor(touchX / cellSize);
+  if (row < rows && col < cols) {
+    grid[row][col] = !grid[row][col];
+  }
+  return false; // Prevent default behavior like scrolling
+}
+
 function playSounds() {
   let currentTime = millis();
   if (currentTime - lastTime > interval) {
