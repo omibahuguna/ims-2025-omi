@@ -38,8 +38,15 @@ function setup() {
     }
   }
 
-  // Resume audio context on user interaction
-  userStartAudio();
+  // Create a button to start the audio context
+  let startButton = createButton('Start Audio');
+  startButton.position(width / 2 - 50, height / 2 - 20);
+  startButton.size(100, 40);
+  startButton.style('font-size', '16px');
+  startButton.mousePressed(() => {
+    userStartAudio(); // Resume the audio context
+    startButton.remove(); // Remove the button after starting audio
+  });
 }
 
 function draw() {
