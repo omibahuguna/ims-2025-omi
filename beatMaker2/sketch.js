@@ -30,12 +30,16 @@ function setup() {
   cellSize = min(width / cols, height / rows);
   interval = 60000 / bpm / 4;
 
+  // Initialize the grid
   for (let i = 0; i < rows; i++) {
     grid[i] = [];
     for (let j = 0; j < cols; j++) {
       grid[i][j] = false;
     }
   }
+
+  // Resume audio context on user interaction
+  userStartAudio();
 }
 
 function draw() {
