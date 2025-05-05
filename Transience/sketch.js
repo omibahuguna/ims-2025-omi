@@ -79,12 +79,12 @@ function draw() {
     // Vertical line to show current column
   if (currentCol >= 0 && currentCol < cols) {
     let lineX = map(currentCol, 0, cols, 0, width); // Map the column index to canvas width
-    push();
-    drawingContext.filter = 'blur(20px)';
-    stroke(166, 255, 0, 127); 
-    strokeWeight(5); 
-    line(lineX, 0, lineX, height);
-    pop();
+    // push();
+    // drawingContext.filter = 'blur(20px)';
+    // stroke(166, 255, 0, 127); 
+    // strokeWeight(5); 
+    // line(lineX, 0, lineX, height);
+    // pop();
     push();
     stroke(255); 
     strokeWeight(2);
