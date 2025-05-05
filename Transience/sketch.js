@@ -72,9 +72,9 @@ function draw() {
   // Image video to full width of canvas
   // height is adjusted for aspect ratio
   image(layer, 0, 0, dw, dh, 0, 0, sw, sh);
-  fill (255);
-  textSize(24);
-    text(`Capture Interval: ${captureInterval.toFixed(1)} ms`, 20, 20);
+  // fill (255);
+  // textSize(24);
+  //   text(`Capture Interval: ${captureInterval.toFixed(1)} ms`, 20, 20);
 
     // Vertical line to show current column
   if (currentCol >= 0 && currentCol < cols) {
