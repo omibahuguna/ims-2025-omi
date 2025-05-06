@@ -1,4 +1,4 @@
-let players; // Tone.js Players instead of sounds array
+let players;
 let grid = [];
 let cols = 20; // 4 bars x 4 beats
 let rows = 12; // tracks
@@ -8,9 +8,8 @@ let bpm = 120;
 let isLoaded = false;
 
 function setup() {
-  console.log("Setting up sketch...");
   createCanvas(windowWidth, windowHeight);
-  background(30); // Set initial background
+  background(30);
   
   cellSize = min(width / cols, height / rows);
   
@@ -22,9 +21,8 @@ function setup() {
     }
   }
 
-  // Initialize Tone.js Players with error handling
+  // Initialize Tone.js Players
   try {
-    console.log("Setting up Tone.js players...");
     players = new Tone.Players({
       kick: 'Sounds/kick.mp3',
       snare: 'Sounds/snare.mp3',
@@ -40,58 +38,42 @@ function setup() {
       keyF: 'Sounds/keyf.mp3'
     }, {
       onload: () => {
-        console.log("All sounds loaded successfully");
         isLoaded = true;
-      },
-      onerror: (e) => {
-        console.error("Error loading sound:", e);
       }
     }).toDestination();
     
     // Set up Tone.js Transport
     Tone.Transport.bpm.value = bpm;
-    Tone.Transport.scheduleRepeat(playSounds, '16n'); // Schedule every 16th note
+    Tone.Transport.scheduleRepeat(playSounds, '16n');
     
+  
     let startButton = createButton('Start Audio');
     startButton.position(width / 2 - 50, height / 2 - 20);
     startButton.size(100, 40);
     startButton.style('font-size', '16px');
-    startButton.mousePressed(() => {
-      console.log("Starting Tone.js...");
-      
-      // Resume the audio context
+    
+    // Define the audio start function
+    function startAudio() {
+      // Resume audio context and start playback
       Tone.start()
         .then(() => {
-          console.log("Audio context started successfully!");
-          
-          // Start the transport (playback timeline)
           Tone.Transport.start();
-          
-          // Remove the start button
           startButton.remove();
-          
-          // Set context state to "running" (important!)
           Tone.context.resume();
-          
-          // Log current state
-          console.log("Transport state:", Tone.Transport.state);
-          console.log("Audio context state:", Tone.context.state);
-        })
-        .catch(error => {
-          console.error("Error starting Tone.js:", error);
         });
-    });
+    }
+    
+    // Handle both mouse and touch events
+    startButton.mousePressed(startAudio);
+    startButton.touchEnded(startAudio);
     
   } catch (error) {
-    console.error("Error in setup:", error);
     // Display error message on canvas
     background(255);
     fill(255, 0, 0);
     textSize(16);
     text("Error initializing Tone.js. Check console.", width/2 - 100, height/2);
   }
-  
-  console.log("Setup complete");
 }
 
 function draw() {
@@ -101,38 +83,37 @@ function draw() {
     // Only draw the grid if players are initialized
     if (players) {
       drawGrid();
-      drawGlow(); // Draw the glow effect on top of the grid
+      drawGlow();
 
       // Highlight current beat with circles
       let gridWidth = cols * cellSize;
       let gridHeight = rows * cellSize;
-      let xOffset = (width - gridWidth) / 2; // Center horizontally
-      let yOffset = (height - gridHeight) / 2; // Center vertically
+      let xOffset = (width - gridWidth) / 2;
+      let yOffset = (height - gridHeight) / 2;
 
       for (let i = 0; i < rows; i++) {
         fill(255,178,0);
         noStroke()
         ellipse(
-          currentBeat * cellSize + cellSize / 2 + xOffset, // x center position with offset
-          i * cellSize + cellSize / 2 + yOffset,          // y center position with offset
-          cellSize,                                       // width
-          cellSize                                        // height
+          currentBeat * cellSize + cellSize / 2 + xOffset,
+          i * cellSize + cellSize / 2 + yOffset,
+          cellSize,
+          cellSize
         );
       }
     } else {
-      // Display message if players not initialized
+      // Display loading message
       fill(255);
       textAlign(CENTER);
       textSize(16);
       text("Loading audio files...", width / 2, height / 2);
     }
   } catch (error) {
-    console.error("Error in draw:", error);
     // Display error message on canvas
     background(255);
     fill(255, 0, 0);
     textSize(16);
-    text("Error in draw function. Check console.", width / 2 - 100, height / 2);
+    text("Error in draw function.", width / 2 - 100, height / 2);
   }
 }
 
@@ -140,45 +121,46 @@ function drawGlow() {
   // Calculate offsets to center the grid
   let gridWidth = cols * cellSize;
   let gridHeight = rows * cellSize;
-  let xOffset = (width - gridWidth) / 2; // Center horizontally
-  let yOffset = (height - gridHeight) / 2; // Center vertically
+  let xOffset = (width - gridWidth) / 2;
+  let yOffset = (height - gridHeight) / 2;
 
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < cols; j++) {
       if (grid[i][j]) {
         // Add glow effect for active cells
         drawingContext.shadowBlur = 50; 
-        drawingContext.shadowColor = 'rgba(255, 75, 0, 0.8)'; // Glow color
-        fill(255,0, 0); // Slightly transparent fill for the glow
+        drawingContext.shadowColor = 'rgba(255, 75, 0, 0.8)';
+        fill(255, 0, 0);
         noStroke();
         ellipse(
-          j * cellSize + cellSize / 2 + xOffset, // x center position with offset
-          i * cellSize + cellSize / 2 + yOffset, // y center position with offset
-          cellSize,                              // width
-          cellSize                               // height
+          j * cellSize + cellSize / 2 + xOffset,
+          i * cellSize + cellSize / 2 + yOffset,
+          cellSize,
+          cellSize
         );
-        drawingContext.shadowBlur = 0; // Reset shadowBlur after drawing
+        drawingContext.shadowBlur = 0;
       }
     }
   }
 }
+
 function drawGrid() {
   // Calculate offsets to center the grid
   let gridWidth = cols * cellSize;
   let gridHeight = rows * cellSize;
-  let xOffset = (width - gridWidth) / 2; // Center horizontally
-  let yOffset = (height - gridHeight) / 2; // Center vertically
+  let xOffset = (width - gridWidth) / 2;
+  let yOffset = (height - gridHeight) / 2;
 
-  // Draw the grid cells as circles
+  // Draw the grid cells
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < cols; j++) {
       fill(getCellColor(i, j));
-     noStroke()
+      noStroke();
       ellipse(
-        j * cellSize + cellSize / 2 + xOffset, // x center position with offset
-        i * cellSize + cellSize / 2 + yOffset, // y center position with offset
-        cellSize,                              // width
-        cellSize                               // height
+        j * cellSize + cellSize / 2 + xOffset,
+        i * cellSize + cellSize / 2 + yOffset,
+        cellSize,
+        cellSize
       );
     }
   }
@@ -204,8 +186,8 @@ function getCellColor(row, col) {
       // Create a darker version of the base color
       return color(
         red(baseColor) * 0.7, 
-        green(baseColor) *0.7, 
-        blue(baseColor) * 0.7, 
+        green(baseColor) * 0.7, 
+        blue(baseColor) * 0.7
       );
     } else {
       return baseColor;
@@ -218,8 +200,8 @@ function mousePressed() {
     // Calculate offsets to center the grid
     let gridWidth = cols * cellSize;
     let gridHeight = rows * cellSize;
-    let xOffset = (width - gridWidth) / 2; // Center horizontally
-    let yOffset = (height - gridHeight) / 2; // Center vertically
+    let xOffset = (width - gridWidth) / 2;
+    let yOffset = (height - gridHeight) / 2;
 
     // Adjust mouse coordinates by subtracting the offsets
     let row = floor((mouseY - yOffset) / cellSize);
@@ -230,7 +212,7 @@ function mousePressed() {
       grid[row][col] = !grid[row][col]; // Toggle the cell state
     }
   } catch (error) {
-    console.error("Error in mousePressed:", error);
+    // Silent error handling
   }
 }
 
@@ -239,8 +221,8 @@ function touchStarted() {
     // Calculate offsets to center the grid
     let gridWidth = cols * cellSize;
     let gridHeight = rows * cellSize;
-    let xOffset = (width - gridWidth) / 2; // Center horizontally
-    let yOffset = (height - gridHeight) / 2; // Center vertically
+    let xOffset = (width - gridWidth) / 2;
+    let yOffset = (height - gridHeight) / 2;
 
     // Adjust touch coordinates by subtracting the offsets
     let row = floor((touchY - yOffset) / cellSize);
@@ -252,16 +234,12 @@ function touchStarted() {
     }
     return false; // Prevent default behavior like scrolling
   } catch (error) {
-    console.error("Error in touchStarted:", error);
     return false;
   }
 }
 
 function playSounds(time) {
   try {
-    // Debug to confirm this function is running
-    console.log("Current beat:", currentBeat);
-    
     // Define sound names in order to match their index with grid rows
     const soundNames = [
       'kick', 'snare', 'tom', 'hihat', 
@@ -272,14 +250,9 @@ function playSounds(time) {
     // Check each row at the current beat position
     for (let i = 0; i < rows; i++) {
       if (grid[i][currentBeat]) {
-        console.log("Trying to play sound at row:", i, "sound name:", soundNames[i]);
-        
         // Make sure both the player and sound exist
         if (i < soundNames.length && players.has(soundNames[i])) {
-          // Debug that we're playing a specific sound
-          console.log("Playing:", soundNames[i]);
-          
-          // Start the player with a specific time and small volume increase for clarity
+          // Play the sound
           const player = players.player(soundNames[i]);
           player.volume.value = 0; // Set volume to 0dB (normal)
           player.start(time);
@@ -290,7 +263,7 @@ function playSounds(time) {
     // Move to the next beat
     currentBeat = (currentBeat + 1) % cols;
   } catch (error) {
-    console.error("Error in playSounds:", error);
+    // Silent error handling
   }
 }
 
