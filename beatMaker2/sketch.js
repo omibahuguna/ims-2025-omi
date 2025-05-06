@@ -46,11 +46,10 @@ function setup() {
     Tone.Transport.bpm.value = bpm;
     Tone.Transport.scheduleRepeat(playSounds, '16n');
     
-  
     let startButton = createButton('Start Audio');
-    startButton.position(width / 2 - 50, height / 2 - 20);
-    startButton.size(100, 40);
-    startButton.style('font-size', '16px');
+    startButton.position(width / 2 - 75, height / 2 - 30);
+    startButton.size(150, 60); // Make larger for touch targets
+    startButton.style('font-size', '18px');
     
     // Define the audio start function
     function startAudio() {
@@ -61,11 +60,12 @@ function setup() {
           startButton.remove();
           Tone.context.resume();
         });
+      return false; // Prevent default behavior
     }
     
-    // Handle both mouse and touch events
+    // Handle both mouse and touch events properly
     startButton.mousePressed(startAudio);
-    startButton.touchEnded(startAudio);
+    startButton.touchStarted(startAudio); 
     
   } catch (error) {
     // Display error message on canvas
@@ -225,17 +225,24 @@ function touchStarted() {
     let yOffset = (height - gridHeight) / 2;
 
     // Adjust touch coordinates by subtracting the offsets
-    let row = floor((touchY - yOffset) / cellSize);
-    let col = floor((touchX - xOffset) / cellSize);
+    // Use touches array to get coordinates
+    if (touches.length > 0) {
+      let row = floor((touches[0].y - yOffset) / cellSize);
+      let col = floor((touches[0].x - xOffset) / cellSize);
 
-    // Check if the touch is within the grid bounds
-    if (row >= 0 && row < rows && col >= 0 && col < cols) {
-      grid[row][col] = !grid[row][col]; // Toggle the cell state
+      // Check if the touch is within the grid bounds
+      if (row >= 0 && row < rows && col >= 0 && col < cols) {
+        grid[row][col] = !grid[row][col]; // Toggle the cell state
+      }
     }
     return false; // Prevent default behavior like scrolling
   } catch (error) {
     return false;
   }
+}
+
+function touchMoved() {
+  return false; // Prevent default behavior like scrolling
 }
 
 function playSounds(time) {
