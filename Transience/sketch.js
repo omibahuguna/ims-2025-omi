@@ -23,7 +23,7 @@ let lastPoseDetected = false;
 
 let lastKeypointPos = null; // To store the last position of the keypoint
 let minCaptureInterval = 1; // Minimum capture interval (ms)
-let maxCaptureInterval = 30; // Maximum capture interval (ms)
+let maxCaptureInterval = 60; // Maximum capture interval (ms)
 
 let my = {};
 
@@ -91,7 +91,16 @@ function draw() {
     line(lineX, 0, lineX, height);
     pop();
   }
+
+  let barHeight = height * 0.15;
+  fill(0);
+  noStroke();
+  // Top bar
+  rect(0, 0, width, barHeight);
+  // Bottom bar
+  rect(0, height - barHeight, width, barHeight);
 }
+ 
 
 // image(img, dx, dy, dWidth, dHeight, sx, sy, [sWidth], [sHeight], [fit], [xAlign], [yAlign])
 
@@ -242,11 +251,15 @@ function keyPressed() {
 }
 
 function create_ui() {
+  document.body.style.margin = '0';
+  document.body.style.padding = '0';
+  document.body.style.overflow = 'hidden';
+  
   my.fullScreenBtn = createButton('Full Screen');
   my.fullScreenBtn.mousePressed(full_screen_action);
   my.fullScreenBtn.style('font-size:42px');
+  my.fullScreenBtn.position(10, windowHeight - 60);
 }
-
 function full_screen_action() {
   my.fullScreenBtn.remove();
   fullscreen(1);

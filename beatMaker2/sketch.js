@@ -1,15 +1,26 @@
 let players;
 let grid = [];
-let cols = 20; // 4 bars x 4 beats
-let rows = 12; // tracks
+let cols = 24; // 4 bars x 4 beats
+let rows =12; // tracks
 let cellSize;
 let currentBeat = 0;
-let bpm = 120;
+let bpm = 150;
 let isLoaded = false;
+
+let font;
+let bpmSlider;
+let bpmLabel;
+
+
+function preload() {
+  // Load the custom font
+  font = loadFont('Doto.ttf');
+}
+
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  background(30);
+  textFont(font);
   
   cellSize = min(width / cols, height / rows);
   
@@ -77,9 +88,8 @@ function setup() {
 }
 
 function draw() {
+  background(0);
   try {
-    background(0);
-
     // Only draw the grid if players are initialized
     if (players) {
       drawGrid();
@@ -249,9 +259,9 @@ function playSounds(time) {
   try {
     // Define sound names in order to match their index with grid rows
     const soundNames = [
-      'kick', 'snare', 'tom', 'hihat', 
-      'bassF', 'bassE', 'bassD', 'bassC',
-      'keyC', 'keyD', 'keyE', 'keyF'
+      'kick', 'snare', 'tom', 'hihat',  // Rows 0-3 (drums)
+      'bassF', 'bassE', 'bassD', 'bassC', // Rows 4-7 (bass)
+      'keyF', 'keyE', 'keyD', 'keyC'     // Rows 8-11 (keys - reversed order)
     ];
     
     // Check each row at the current beat position
@@ -274,7 +284,47 @@ function playSounds(time) {
   }
 }
 
+function createBPMControls() {
+  // Container for centering controls
+  let controlsWidth = 200;
+  let controlsX = width / 2 - controlsWidth / 2;
+  let controlsY = 20; // Position at the top of the screen
+  
+  // Create BPM label
+  bpmLabel = createDiv('BPM: ' + bpm);
+  bpmLabel.position(controlsX, controlsY);
+  bpmLabel.style('color', 'white');
+  bpmLabel.style('font-family', 'Doto, sans-serif');
+  bpmLabel.style('font-size', '16px');
+  bpmLabel.style('text-align', 'center');
+  bpmLabel.style('width', controlsWidth + 'px');
+  
+  // Create BPM slider
+  bpmSlider = createSlider(60, 200, bpm, 1);
+  bpmSlider.position(controlsX, controlsY + 30);
+  bpmSlider.style('width', controlsWidth + 'px');
+  
+  // Update BPM when slider changes
+  bpmSlider.input(() => {
+    bpm = bpmSlider.value();
+    bpmLabel.html('BPM: ' + bpm);
+    if (Tone.Transport) {
+      Tone.Transport.bpm.value = bpm;
+    }
+  });
+}
+
+// Add this to the windowResized function
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   cellSize = min(width / cols, height / rows);
+  
+  // Reposition BPM controls
+  if (bpmSlider && bpmLabel) {
+    let controlsWidth = 200;
+    let controlsX = width / 2 - controlsWidth / 2;
+    
+    bpmLabel.position(controlsX, 20);
+    bpmSlider.position(controlsX, 50);
+  }
 }
